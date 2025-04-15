@@ -246,9 +246,191 @@
 // }
 
 
+// import * as React from 'react';
+// import axios from 'axios';
+// import ReactMarkdown from 'react-markdown';  // Make sure react-markdown is imported
+// import styles from './GmfBot.module.scss';
+
+// type Message = {
+//   sender: 'user' | 'bot';
+//   text: string;
+// };
+
+// export default function Chatbot(): JSX.Element {
+//   const [messages, setMessages] = React.useState<Message[]>([]);
+//   const [input, setInput] = React.useState<string>('');
+  
+//   const send = async (): Promise<void> => {
+//     if (!input.trim()) return;
+
+//     setMessages((prev) => [...prev, { sender: 'user', text: input }]);
+
+//     try {
+//       const res = await axios.post('http://localhost:8000/chat', { message: input });
+
+//       // Check if response has valid data
+//       if (res.data && res.data.response) {
+//         setMessages((prev) => [
+//           ...prev,
+//           { sender: 'bot', text: res.data.response }  // Ensure this response is in markdown format
+//         ]);
+//       } else {
+//         setMessages((prev) => [
+//           ...prev,
+//           { sender: 'bot', text: 'No response from bot.' }
+//         ]);
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       setMessages((prev) => [
+//         ...prev,
+//         { sender: 'bot', text: 'Something went wrong. Please try again later.' }
+//       ]);
+//     }
+
+//     setInput('');
+//   };
+
+//   return (
+//     <div className={styles.chatContainer}>
+//       <div className={styles.chatWindow}>
+//         {messages.map((msg, i) => (
+//           <div key={i} className={`${styles.message} ${styles[msg.sender]}`}>
+//             {/* Render the response using react-markdown */}
+//             <ReactMarkdown>{msg.text}</ReactMarkdown>  {/* This will render markdown */}
+//           </div>
+//         ))}
+//       </div>
+
+//       <div className={styles.inputWrapper}>
+//         <input
+//           type="text"
+//           value={input}
+//           onChange={(e) => setInput(e.target.value)}
+//           placeholder="Ask something..."
+//           onKeyDown={(e) => e.key === 'Enter' && send()}
+//         />
+//         <button onClick={send}>➤</button>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+// import * as React from 'react';
+// import axios from 'axios';
+// import ReactMarkdown from 'react-markdown'; // Make sure react-markdown is imported
+// import styles from './GmfBot.module.scss';
+
+// type Message = {
+//   sender: 'user' | 'bot';
+//   text: string;
+// };
+
+// export default function Chatbot(): JSX.Element {
+//   const [messages, setMessages] = React.useState<Message[]>([]);
+//   const [input, setInput] = React.useState<string>('');
+//   const [contentProcessed, setContentProcessed] = React.useState<boolean>(false); // To track if content has been processed
+//   const [isProcessing, setIsProcessing] = React.useState<boolean>(false); // To show loading state for processing
+
+//   // Function to trigger process-content API
+//   const processContent = async () => {
+//     setIsProcessing(true); // Set loading state while processing content
+//     try {
+//       // Call your backend API to process content
+//       const response = await axios.post('http://localhost:8000/process-content', {
+//         process_site_pages: true,
+//         process_documents: true,
+//         store_name: 'chatbot-store', // Use appropriate store name
+//       });
+
+//       // If content is processed, update state to reflect this
+//       if (response.data.status === 'success') {
+//         setContentProcessed(true);
+//         console.log('Content processed successfully!');
+//       } else {
+//         console.error('Error processing content:', response.data.message);
+//       }
+//     } catch (error) {
+//       console.error('Error calling process-content API:', error);
+//     } finally {
+//       setIsProcessing(false); // Reset loading state after processing is done
+//     }
+//   };
+
+//   // Send function
+//   const send = async (): Promise<void> => {
+//     if (!input.trim()) return;
+
+//     setMessages((prev) => [...prev, { sender: 'user', text: input }]);
+
+//     try {
+//       const res = await axios.post('http://localhost:8000/chat', { message: input });
+
+//       // Check if response has valid data
+//       if (res.data && res.data.response) {
+//         setMessages((prev) => [
+//           ...prev,
+//           { sender: 'bot', text: res.data.response } // Ensure this response is in markdown format
+//         ]);
+//       } else {
+//         setMessages((prev) => [
+//           ...prev,
+//           { sender: 'bot', text: 'No response from bot.' }
+//         ]);
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       setMessages((prev) => [
+//         ...prev,
+//         { sender: 'bot', text: 'Something went wrong. Please try again later.' }
+//       ]);
+//     }
+
+//     setInput('');
+//   };
+
+//   // Trigger content processing when the component is mounted or based on interaction
+//   React.useEffect(() => {
+//     if (!contentProcessed) {
+//       processContent(); // Automatically trigger content processing on first load or interaction
+//     }
+//   }, [contentProcessed]);
+
+//   return (
+//     <div className={styles.chatContainer}>
+//       <div className={styles.chatWindow}>
+//         {messages.map((msg, i) => (
+//           <div key={i} className={`${styles.message} ${styles[msg.sender]}`}>
+//             {/* Render the response using react-markdown */}
+//             <ReactMarkdown>{msg.text}</ReactMarkdown> {/* This will render markdown */}
+//           </div>
+//         ))}
+//       </div>
+
+//       {isProcessing && (
+//         <div className={styles.processingMessage}>Processing content... Please wait.</div>
+//       )}
+
+//       <div className={styles.inputWrapper}>
+//         <input
+//           type="text"
+//           value={input}
+//           onChange={(e) => setInput(e.target.value)}
+//           placeholder="Ask something..."
+//           onKeyDown={(e) => e.key === 'Enter' && send()}
+//         />
+//         <button onClick={send}>➤</button>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
 import * as React from 'react';
 import axios from 'axios';
-import ReactMarkdown from 'react-markdown';  // Make sure react-markdown is imported
+import ReactMarkdown from 'react-markdown'; // Make sure react-markdown is imported
 import styles from './GmfBot.module.scss';
 
 type Message = {
@@ -259,8 +441,34 @@ type Message = {
 export default function Chatbot(): JSX.Element {
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [input, setInput] = React.useState<string>('');
+  const [contentProcessed, setContentProcessed] = React.useState<boolean>(false); // To track if content has been processed
+  const [isProcessing, setIsProcessing] = React.useState<boolean>(false); // To show loading state for processing
 
-  const send = async (): Promise<void> => {
+  // Function to trigger process-content API
+  const processContent = async (): Promise<void> => {
+    setIsProcessing(true); // Set loading state while processing content
+    try {
+      const response = await axios.post('http://localhost:8000/process-content', {
+        process_site_pages: true,
+        process_documents: true,
+        store_name: 'chatbot-store', // Use appropriate store name
+      });
+
+      if (response.data.status === 'success') {
+        setContentProcessed(true);
+        console.log('Content processed successfully!');
+      } else {
+        console.error('Error processing content:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error calling process-content API:', error);
+    } finally {
+      setIsProcessing(false); // Reset loading state after processing is done
+    }
+  };
+
+  // Send function with explicit return type and proper async handling
+  const send = async (): Promise<void> => { // Explicit return type added
     if (!input.trim()) return;
 
     setMessages((prev) => [...prev, { sender: 'user', text: input }]);
@@ -268,39 +476,50 @@ export default function Chatbot(): JSX.Element {
     try {
       const res = await axios.post('http://localhost:8000/chat', { message: input });
 
-      // Check if response has valid data
       if (res.data && res.data.response) {
         setMessages((prev) => [
           ...prev,
-          { sender: 'bot', text: res.data.response }  // Ensure this response is in markdown format
+          { sender: 'bot', text: res.data.response },
         ]);
       } else {
         setMessages((prev) => [
           ...prev,
-          { sender: 'bot', text: 'No response from bot.' }
+          { sender: 'bot', text: 'No response from bot.' },
         ]);
       }
     } catch (err) {
       console.error(err);
       setMessages((prev) => [
         ...prev,
-        { sender: 'bot', text: 'Something went wrong. Please try again later.' }
+        { sender: 'bot', text: 'Something went wrong. Please try again later.' },
       ]);
     }
 
     setInput('');
   };
 
+  // Trigger content processing when the component is mounted or based on interaction
+  React.useEffect(() => {
+    if (!contentProcessed) {
+      processContent().catch((err) => {
+        console.error('Error during content processing:', err); // Handle errors properly
+      });
+    }
+  }, [contentProcessed]);
+
   return (
     <div className={styles.chatContainer}>
       <div className={styles.chatWindow}>
         {messages.map((msg, i) => (
           <div key={i} className={`${styles.message} ${styles[msg.sender]}`}>
-            {/* Render the response using react-markdown */}
-            <ReactMarkdown>{msg.text}</ReactMarkdown>  {/* This will render markdown */}
+            <ReactMarkdown>{msg.text}</ReactMarkdown>
           </div>
         ))}
       </div>
+
+      {isProcessing && (
+        <div className={styles.processingMessage}>Processing content... Please wait.</div>
+      )}
 
       <div className={styles.inputWrapper}>
         <input
@@ -315,3 +534,4 @@ export default function Chatbot(): JSX.Element {
     </div>
   );
 }
+

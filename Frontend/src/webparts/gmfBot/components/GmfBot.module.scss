@@ -111,6 +111,16 @@
   border-bottom-left-radius: 0;
 }
 
+.processingMessage {
+  font-size: 16px;
+  color: #4CAF50; /* Green color */
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+}  
+  
+
+
 .inputWrapper {
   display: flex;
   padding: 12px;
