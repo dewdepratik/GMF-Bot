@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
+import pandas as pd
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional, Set
 import uvicorn
@@ -22,6 +23,7 @@ from bs4 import BeautifulSoup
 from basic1 import get_events
 
 
+
 # Load environment variables
 load_dotenv()
 
@@ -37,6 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# OpenAI configuration
 
 
 # Gemini configuration
@@ -656,17 +659,20 @@ async def chat_endpoint(request: ChatRequest):
                 content={"error": "No content has been processed yet. Please call /process-content first."}
             )
         querflag = query_flag(request.message)
-        print("maza flag", querflag)
+        print("flag =", querflag)
         
         response = ""
+        
         
         if querflag == "False":
            response = process_chat_message(request.message)
         if querflag == "True":
-           response_event = get_events()
-           
+           response_event = get_events()  
            print("testing",response_event)
            response= Event_method(request.message,response_event)
+        if querflag == "Donation":
+            response= ask_about_donor(request.message)  
+            
         
         return ChatResponse(response=response)
     
@@ -679,8 +685,9 @@ def query_flag(question):
 
             Classify its primary focus:
             * **Event** (meeting,reminder, etc.)
+            * **Donation** (Donors,Campaign,donations etc.)
 
-            Output ONLY a boolean:`True` if Event  `False` if other,. No other text."""
+            Output ONLY a boolean:`True` if Event ,`Donation` if Donation , `False` if other,. No other text."""
             
     response = openai_client.chat.completions.create(  # Updated method calls
         model="gpt-4o-mini",  # You can change this to any model available
@@ -719,6 +726,35 @@ def Event_method(question,data):
 
     # Extract and return the response text (updated to match new response format)
     return response.choices[0].message.content.strip()
+
+def ask_about_donor(question):
+        # Load CSV into a pandas DataFrame
+    df = pd.read_csv("Updated_Donations_data.csv")
+    
+    # Convert DataFrame to a string representation
+    df_string = df.to_string()
+    
+    prompt= f"""You are an AI assistant. Your task is to answer a user's query based *strictly* and *only* on the provided donor data. Do not use any external knowledge or make assumptions beyond what is explicitly stated in the data.
+ 
+    Here is the Donor data:
+    { df_string }
+    User Query: "{question}"
+ 
+    Based *only* on the donor data provided above, answer the user's query. Format your response clearly and appropriately for the query. For example, if the query asks for a list, provide a list. If it asks for details of one donor, provide those details. If no donors match the query, state that clearly.in descriptions when presenting them
+    provide Coorect output always Normal Text format"""
+           
+    
+    # Make the API call with the data and question
+    response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",  # Use an appropriate model
+        messages=[
+            # {"role": "system", "content": "You are analyzing a pandas DataFrame. Here's the data:\n" + df_string},
+            {"role": "user", "content": prompt }
+        ]
+    )
+    
+    # Return the response message content
+    return response.choices[0].message.content
 
 
 
