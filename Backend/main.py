@@ -659,7 +659,7 @@ async def chat_endpoint(request: ChatRequest):
                 content={"error": "No content has been processed yet. Please call /process-content first."}
             )
         querflag = query_flag(request.message)
-        print("flag =", querflag)
+        print("maza flag", querflag)
         
         response = ""
         
@@ -745,16 +745,22 @@ def ask_about_donor(question):
            
     
     # Make the API call with the data and question
-    response = openai_client.chat.completions.create(
-        model="gpt-4o-mini",  # Use an appropriate model
-        messages=[
-            # {"role": "system", "content": "You are analyzing a pandas DataFrame. Here's the data:\n" + df_string},
-            {"role": "user", "content": prompt }
-        ]
-    )
+    # response = openai_client.chat.completions.create(
+    #     model="gpt-4.1-mini",  # Use an appropriate model
+    #     messages=[
+    #         # {"role": "system", "content": "You are analyzing a pandas DataFrame. Here's the data:\n" + df_string},
+    #         {"role": "user", "content": prompt }
+    #     ]
+    # )
+    gemini_model = genai.GenerativeModel("gemini-2.5-pro-preview-03-25")
+    
+    response = gemini_model.generate_content(
+            contents=[{"text": prompt }],
+            generation_config={"temperature": 0.1, "top_p": 0.8}
+        )
     
     # Return the response message content
-    return response.choices[0].message.content
+    return response.text
 
 
 
